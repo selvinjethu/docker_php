@@ -1,0 +1,46 @@
+version: "3.2"
+services:
+  php:
+    build: 
+      context: .
+    image: selvin/selvin:1.0.0
+    networks:
+      - frontend
+      - backend
+    environment:
+      - MYSQL_HOST=selvin
+      - MYSQL_USER=selvin   
+      - MYSQL_PASSWORD=selvin
+      - MYSQL_DB=selvin_db
+    volumes:
+      - ./www/:/var/www/html/
+    ports:
+      - "30001:80"
+    container_name: selvinphp
+  mysql:
+    image: mysql:5.7
+    networks:
+      - backend
+    environment:
+      - MYSQL_ROOT_PASSWORD=selvin  
+      - MYSQL_USER=selvin
+      - MYSQL_PASSWORD=selvin 
+      - MYSQL_DATABASE=selvin
+    container_name: selvinsql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:4.7
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    ports:
+      - "30002:80"
+    environment:
+      - PMA_HOST=selvin-mysql
+      - PMA_PORT= 3306
+    volumes:
+      - /sessions
+    container_name: selvinmysql
+networks:
+  frontend:
+  backend:
